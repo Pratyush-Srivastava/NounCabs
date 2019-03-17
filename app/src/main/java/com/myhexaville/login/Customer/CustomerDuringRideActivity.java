@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.myhexaville.login.CabHiring;
 import com.myhexaville.login.DatabaseHelper;
 import com.myhexaville.login.Driver.DriverActivity;
@@ -43,6 +49,8 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
     private String data;
     private static final String TAG = "TAG" ;
     private WebView wvMaps;
+    private TextView tvCurrentFare;
+    private FirebaseFirestore dbOnline;
 
 
     @Override
@@ -57,6 +65,35 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
         btStopRide=findViewById(R.id.bt_stop_ride_customer);
         btSendSmsEmergency=findViewById(R.id.bt_send_sms_emergency_during_ride);
         tvFare=findViewById(R.id.tv_riding_during_customer);
+        tvCurrentFare=findViewById(R.id.tv_fare_riding_during_customer);
+        dbOnline= FirebaseFirestore.getInstance();
+        rides=(Rides)getIntent().getSerializableExtra("RidesObject");
+        final DocumentReference docRef = dbOnline.collection("duringRide").document(rides.getTimeStamp()+" "+rides.getOtp());
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                        ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, source + " data: " + snapshot.getData());
+                    String d=snapshot.getData().get("distance").toString();
+                    Log.d(TAG," THE VALUE OF DISTANCE IS "+d);
+
+
+
+                    tvCurrentFare.setText(String.format("%.2f",fare(Float.parseFloat(d))));
+                } else {
+                    Log.d(TAG, source + " data: null");
+                }
+            }
+        });
 
         btSendSmsEmergency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +104,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
         });
         wvMaps=findViewById(R.id.wv_maps_customer);
 
-        rides=(Rides)getIntent().getSerializableExtra("RidesObject");
+
 
         String PickUpLatitude=Double.toString(getIntent().getDoubleExtra("PickUpLatitude",0.0));
         String PickUpLongitude=Double.toString(getIntent().getDoubleExtra("PickUpLongitude",0.0));
@@ -93,10 +130,25 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
 
 
     }
+    public float fare(float dist)  {
+        float fare;
+        if(dist>5){
+            fare=dist-5;
+            fare*=15;
+            fare+=40;
+        }
+        else{
+            fare =40;
+        }
+
+        return fare;
+    }
+
 
     private void defineFirstClick(){
-        tvFare.setText(" Estimated Fare = Rs. "+rides.getFare());
-        btStopRide.setText(" Go To Home Page");
+        rides.setFare(tvCurrentFare.getText().toString());
+        tvFare.setText("Final Fare = Rs. "+rides.getFare());
+        btStopRide.setText("Go To Home Page");
         //pushing values to the ride history of that driver
 
         insertValuesToRidesTable(rides.getPickupPoint(),rides.getDropPoint(),rides.getDistance(),rides.getOtp(),rides.getTimeStamp(),rides.getFare(),rides.getDriverPhoneNumber(),rides.getCustomerPhoneNumber());

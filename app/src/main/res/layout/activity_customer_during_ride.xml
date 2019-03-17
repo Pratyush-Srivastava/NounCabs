@@ -8,7 +8,7 @@
 
     <WebView
         android:id="@+id/wv_maps_customer"
-        android:layout_above="@id/tv_riding_during_customer"
+        android:layout_above="@id/ll_currentFareCustomer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -17,14 +17,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-
-        android:layout_margin="5dp"
-        android:text="Emergency"
-        android:padding="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@color/colorPrimaryDark"
-        android:textColor="#ffffff"
+        android:fontFamily="sans-serif-condensed"
+        android:padding="5dp"
+        android:text="Emergency"
         android:textAllCaps="false"
+        android:textColor="#ffffff"
         android:textSize="24sp" />
+    <LinearLayout
+        android:id="@+id/ll_currentFareCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@id/tv_riding_during_customer">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Fare - "
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            />
+        <TextView
+            android:id="@+id/tv_fare_riding_during_customer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#ffffff"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+
 
     <TextView
         android:id="@+id/tv_riding_during_customer"
@@ -32,8 +66,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bt_stop_ride_customer"
         android:background="#ffffff"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="center"
-        android:text="Riding ..."
+        android:text="~Happy Riding~"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp" />
 
@@ -42,9 +77,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Stop Ride"
-        android:textColor="#ffffff"
         android:background="@color/colorPrimaryDark"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Stop Ride"
         android:textAllCaps="false"
+        android:textColor="#ffffff"
         android:textSize="24sp" />
 </RelativeLayout>

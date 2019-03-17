@@ -1481,6 +1481,8 @@ id linear_temp_drop
 id listMode
 id list_item
 id ll_add_money_wallet
+id ll_currentFare
+id ll_currentFareCustomer
 id ll_new_emergency
 id ll_old_emergency
 id ll_rideDetails
@@ -1655,6 +1657,8 @@ id tv_emergency_phone_2_customer_new
 id tv_estFare_take_rides_driver
 id tv_estFare_your_rides_customer
 id tv_estFare_your_rides_driver
+id tv_fare_during_ride_driver
+id tv_fare_riding_during_customer
 id tv_licenseNo_driver
 id tv_login
 id tv_name_driver

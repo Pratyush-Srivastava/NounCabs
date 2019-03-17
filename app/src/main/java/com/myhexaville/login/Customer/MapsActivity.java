@@ -181,11 +181,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkInternetPermissions();
-
-
         setContentView(R.layout.activity_maps);
+        checkInternetPermissions();
+        getLocationPermission();
         String apiKey = getString(R.string.google_maps_key);
+        Log.d(TAG,"On Create is called ");
 
         if (apiKey.equals("")) {
             Toast.makeText(this, "api places initialising error", Toast.LENGTH_LONG).show();
@@ -266,7 +266,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 rideNowButton();
             }
         });
-        getLocationPermission();
+        mGps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: clicked gps icon");
+                getDeviceLocation();
+            }
+        });
+
 
 
 
@@ -356,7 +363,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         float[] results=new float[3];
         Location.distanceBetween(pickup.getLatitude(),pickup.getLongitude(),drop.getLatitude(),drop.getLongitude(),results);
 
-        distance= String.format("%.2f",(results[0]/625));
+        distance= String.format("%.2f",(results[0]/1000.0));
         Random r = new Random();
         int i = r.nextInt(9999 - 1000) + 1000;
         otp=""+i;
@@ -544,13 +551,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-        mGps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: clicked gps icon");
-                getDeviceLocation();
-            }
-        });
+//        mGps.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(TAG, "onClick: clicked gps icon");
+//                getDeviceLocation();
+//            }
+//        });
 
         hideSoftKeyboard();
     }
@@ -702,12 +709,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        if(!title.equals("My Location")){
+//        if(!title.equals("My Location")){
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
             mMap.addMarker(options);
-        }
+//        }
 
         hideSoftKeyboard();
     }

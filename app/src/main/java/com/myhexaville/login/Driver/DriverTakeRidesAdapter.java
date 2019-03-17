@@ -19,6 +19,7 @@ import com.myhexaville.login.RideRequests;
 import com.myhexaville.login.Rides;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +31,7 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
 
         private DriverTakeRidesFragment context;
     private FirebaseFirestore db;
+    private Rides rides;
 
     public DriverTakeRidesAdapter(ArrayList<RideRequests> rideRequestsList, DriverTakeRidesFragment context) {
         this.rideRequestsList = rideRequestsList;
@@ -89,14 +91,35 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
                 db= FirebaseFirestore.getInstance();
                 addingToTheRides(getAdapterPosition());
                 deletingRequest(getAdapterPosition());
+                creatingDocForCurrentFare();
                 moveToDuringRideActivity(getAdapterPosition());
                 return false;
+            }
+            public void creatingDocForCurrentFare(){
+                HashMap<String,Object> docData=new HashMap<>();
+                docData.put("distance","0");
+
+                db.collection("duringRide").document(rides.getTimeStamp()+" "+rides.getOtp())
+                        .set(docData)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
             }
             public void addingToTheRides(int position){
                 RideRequests temp=rideRequestsList.get(position);
                 String data = ((CabHiring)context.getActivity().getApplication()).getPhoneNumber();
 
-                Rides rides=new Rides(temp.getPickupPoint(),temp.getDropPoint(),temp.getDistance(),temp.getOtp(),temp.getTimeStamp(),temp.getFare(),temp.getCustomerPhoneNumber(),data);
+                rides=new Rides(temp.getPickupPoint(),temp.getDropPoint(),temp.getDistance(),temp.getOtp(),temp.getTimeStamp(),temp.getFare(),temp.getCustomerPhoneNumber(),data);
 
 
 

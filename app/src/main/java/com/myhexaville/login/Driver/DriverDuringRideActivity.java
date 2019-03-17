@@ -2,6 +2,7 @@ package com.myhexaville.login.Driver;
 
 import android.Manifest;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -9,7 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +31,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.myhexaville.login.CabHiring;
 import com.myhexaville.login.Customer.CustomerDuringRideActivity;
 import com.myhexaville.login.DatabaseHelper;
@@ -33,29 +49,50 @@ import com.myhexaville.login.WebViewMaps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class DriverDuringRideActivity extends AppCompatActivity {
+public class DriverDuringRideActivity extends AppCompatActivity implements LocationListener {
     private TextView tvFare;
     private Button btStopRide;
     private RideRequests rideRequests;
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase db,dbRead,dbWrite;
+    private FirebaseFirestore dbOnline;
     private Cursor cursor;
     private WebView wvMaps;
     private static final String TAG = "DocSnippets";
+    private TextView tvCurrentFare;
+    protected LocationManager locationManager;
+    private LatLng temp;
+    private float d=0;
+    int f=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_driver_during_ride);
         checkFilePermissions();
         checkInternetPermissions();
-        setContentView(R.layout.activity_driver_during_ride);
+        tvCurrentFare=findViewById(R.id.tv_fare_during_ride_driver);
         openHelper = new DatabaseHelper(this);
         db=openHelper.getWritableDatabase();
         wvMaps=findViewById(R.id.wv_maps);
         rideRequests=(RideRequests) getIntent().getSerializableExtra("RequestObject");
+        dbOnline= FirebaseFirestore.getInstance();
+
+
+        locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                1000, 0, this);
 
         WebSettings webSettings = wvMaps.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -81,6 +118,19 @@ public class DriverDuringRideActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public float fare(float dist)  {
+        float fare;
+        if(dist>5){
+            fare=dist-5;
+            fare*=15;
+            fare+=40;
+        }
+        else{
+            fare =40;
+        }
+
+        return fare;
     }
 
 
@@ -121,12 +171,31 @@ public class DriverDuringRideActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
     private void defineFirstClick(){
-        tvFare.setText(" Estimated Fare = Rs. "+rideRequests.getFare());
-        btStopRide.setText(" Send Bill");
+        rideRequests.setFare(tvCurrentFare.getText().toString());
+        DocumentReference docRef = dbOnline.collection("duringRide").document(rideRequests.getTimeStamp()+" "+rideRequests.getOtp());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        rideRequests.setDistance(document.getData().get("distance").toString());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        tvFare.setText(" Final Fare = Rs. "+rideRequests.getFare());
+        btStopRide.setText("Send Bill");
         pushingAmountEarned();
         //pushing values to the ride history of that driver
         String data=((CabHiring) this.getApplication()).getPhoneNumber();
         insertValuesToRidesTable(rideRequests.getPickupPoint(),rideRequests.getDropPoint(),rideRequests.getDistance(),rideRequests.getOtp(),rideRequests.getTimeStamp(),rideRequests.getFare(),data,rideRequests.getCustomerPhoneNumber());
+        Log.d(TAG,"FIRST CLICKED");
 
 
 
@@ -134,6 +203,7 @@ public class DriverDuringRideActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 defineSecondClick();
+                Log.d(TAG,"SECOND CLICKED");
 
             }
         });
@@ -264,5 +334,60 @@ public class DriverDuringRideActivity extends AppCompatActivity {
         }else {
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        if(f==0){
+            f=1;
+            temp=new LatLng(location.getLatitude(),location.getLongitude());
+            return;
+        }
+
+//        txtLat.setText("Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
+        float[] results=new float[3];
+        Location.distanceBetween(location.getLatitude(),location.getLongitude(),temp.latitude,temp.longitude,results);
+        //Toast.makeText(getApplicationContext(),"In inside",Toast.LENGTH_LONG).show();
+        temp=new LatLng(location.getLatitude(),location.getLongitude());
+        d+=(results[0]/1000.0);
+        tvCurrentFare.setText(String.format("%.2f",fare(d)));
+
+        DocumentReference washingtonRef = dbOnline.collection("duringRide").document(rideRequests.getTimeStamp()+" "+rideRequests.getOtp());
+
+// Set the "isCapital" field of the city 'DC'
+        washingtonRef
+                .update("distance", d)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
+
+
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
