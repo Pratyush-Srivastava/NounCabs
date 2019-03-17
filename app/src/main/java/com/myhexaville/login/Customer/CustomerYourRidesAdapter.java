@@ -61,8 +61,8 @@ public class CustomerYourRidesAdapter extends RecyclerView.Adapter<CustomerYourR
     //Binding the data using get() method of POJO object
     @Override
     public void onBindViewHolder(final CustomerYourRidesAdapter.MyViewHolder holder, int position) {
-        holder.tvPickup.setText(pickup.get(position));
-        holder.tvDrop.setText(drop.get(position));
+        holder.tvPickup.setText("From: "+pickup.get(position));
+        holder.tvDrop.setText("To: "+drop.get(position));
         holder.tvEstFare.setText("Rs. "+estFare.get(position));
         holder.tvTime.setText(time.get(position));
 

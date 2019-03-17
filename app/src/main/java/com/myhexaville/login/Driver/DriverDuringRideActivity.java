@@ -13,6 +13,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.myhexaville.login.CabHiring;
+import com.myhexaville.login.Customer.CustomerDuringRideActivity;
 import com.myhexaville.login.DatabaseHelper;
 import com.myhexaville.login.R;
 import com.myhexaville.login.RideRequests;
@@ -32,6 +34,7 @@ import com.myhexaville.login.WebViewMaps;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DriverDuringRideActivity extends AppCompatActivity {
     private TextView tvFare;
@@ -47,6 +50,7 @@ public class DriverDuringRideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkFilePermissions();
+        checkInternetPermissions();
         setContentView(R.layout.activity_driver_during_ride);
         openHelper = new DatabaseHelper(this);
         db=openHelper.getWritableDatabase();
@@ -118,7 +122,7 @@ public class DriverDuringRideActivity extends AppCompatActivity {
     }
     private void defineFirstClick(){
         tvFare.setText(" Estimated Fare = Rs. "+rideRequests.getFare());
-        btStopRide.setText(" Go To the Home Page");
+        btStopRide.setText(" Send Bill");
         pushingAmountEarned();
         //pushing values to the ride history of that driver
         String data=((CabHiring) this.getApplication()).getPhoneNumber();
@@ -151,8 +155,51 @@ public class DriverDuringRideActivity extends AppCompatActivity {
 
     }
     private void defineSecondClick(){
+        sendBill();
         Intent i=new Intent(DriverDuringRideActivity.this,DriverActivity.class);
         startActivity(i);
+
+    }
+    protected void sendMessage(String message) {
+        try {
+            String phoneNumber = "+91"+rideRequests.getCustomerPhoneNumber();
+            SmsManager smsManager = SmsManager.getDefault();
+
+            ArrayList<String> parts = smsManager.divideMessage(message);
+            //smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+            smsManager.sendMultipartTextMessage(phoneNumber, null, parts,
+                    null, null);
+            Toast.makeText(getApplicationContext(), "SMS Send !", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "SMS Failed ! "+e.toString(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void sendBill(){
+        sendMessage("GREETINGS FROM VELOCE CABS. YOUR RIDE BILL AND DETAILS OF YOUR TRAVEL ON : "+rideRequests.getTimeStamp()+"\n" +
+                "are Distance Travelled  : "+rideRequests.getDistance()+" kms, \n" +
+                "Total Fare          : "+rideRequests.getFare()+" Rs.\n" +
+                "\nTHANK YOU!!!");
+//        Random random=new Random();
+//        String no = "+91"+rideRequests.getCustomerPhoneNumber();
+//        String msg ="GREETINGS FROM VELOCE CABS. YOUR RIDE BILL AND DETAILS OF YOUR TRAVEL ON :"+rideRequests.getTimeStamp()+
+//                "are Distance Travelled  : "+rideRequests.getDistance()+" kms, "+
+//                " Total Fare          : "+rideRequests.getFare()+" Rs."+
+//                "\nTHANK YOU!!!";
+//        SmsManager.getDefault().sendTextMessage(no, null, msg, null,null);
+//        Toast.makeText(this," Message sent by Sms Manager ",Toast.LENGTH_SHORT).show();
+
+////Getting intent and PendingIntent instance
+//        Intent intent = new Intent(getApplicationContext(), CustomerActivity.class);
+//        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+////Get the SmsManager instance and call the sendTextMessage method to send message
+//        SmsManager sms = SmsManager.getDefault();
+//        sms.sendTextMessage(no, null, msg, pi, null);
+//        Toast.makeText(getApplicationContext(), "Bill Sent successfully!",
+//                Toast.LENGTH_LONG).show();
+
+
     }
     private void pushingAmountEarned(){
 
@@ -166,9 +213,9 @@ public class DriverDuringRideActivity extends AppCompatActivity {
             do{
 
                 String wallet=cursor.getString(cursor.getColumnIndex("amountEarned"));
-                int WalletValue=Integer.parseInt(wallet);
-                int newValue=WalletValue+Integer.parseInt(rideRequests.getFare());
-                incrementingWallet(""+newValue);
+                float WalletValue=Float.parseFloat(wallet);
+                float newValue=WalletValue+Float.parseFloat(rideRequests.getFare());
+                incrementingWallet(""+String.format("%.2f",newValue));
 
 
             } while(cursor.moveToNext());
@@ -183,7 +230,7 @@ public class DriverDuringRideActivity extends AppCompatActivity {
         dbWrite.update(DatabaseHelper.TABLE_NAME_2,contentValues,DatabaseHelper.COL_21+" =? ",new String[]{data});
 
     }
-    private void checkFilePermissions() {
+    private void checkInternetPermissions() {
         if (ContextCompat.checkSelfPermission(DriverDuringRideActivity.this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -195,6 +242,24 @@ public class DriverDuringRideActivity extends AppCompatActivity {
             if (permissionCheck != 0) {
 
                 this.requestPermissions(new String[]{Manifest.permission.INTERNET}, 1001); //Any number
+            }
+        }else {
+            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
+    }
+    private void checkFilePermissions() {
+        if (ContextCompat.checkSelfPermission(DriverDuringRideActivity.this, android.Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            Toast.makeText(this,"Please Give Permissions",Toast.LENGTH_SHORT).show();
+        }
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+        {
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.SEND_SMS");
+
+            if (permissionCheck != 0) {
+
+                this.requestPermissions(new String[]{android.Manifest.permission.SEND_SMS}, 1001); //Any number
             }
         }else {
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");

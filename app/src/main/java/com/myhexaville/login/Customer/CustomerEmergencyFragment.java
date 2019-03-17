@@ -29,7 +29,7 @@ public class CustomerEmergencyFragment extends Fragment {
     private LinearLayout llEmergencyOld,llEmergencyNew;
     private TextView tvEmergency1,tvEmergency2;
     private EditText etvEmergency1,etvEmergency2;
-    private Button btAddEmergency;
+    private Button btAddEmergency,btDeleteEmergency;
     private Cursor cursor;
     private String data;
 
@@ -54,8 +54,29 @@ public class CustomerEmergencyFragment extends Fragment {
         llEmergencyNew=v.findViewById(R.id.ll_new_emergency);
         llEmergencyOld=v.findViewById(R.id.ll_old_emergency);
         btAddEmergency=v.findViewById(R.id.bt_add_emergency_phone_number);
+        btDeleteEmergency=v.findViewById(R.id.bt_delete_emergency_phone_number);
+        btDeleteEmergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(deleteEmergencynumbers()){
+                    Toast.makeText(getContext(),"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(),"Deletion Unsuccessful",Toast.LENGTH_SHORT).show();
+                }
+                intialView();
+            }
+        });
 
         data=((CabHiring) getActivity().getApplication()).getPhoneNumber();
+
+        intialView();
+
+
+
+        return v;
+    }
+    private void intialView(){
         cursor=dbRead.rawQuery("SELECT * FROM " + DatabaseHelper.TABLE_NAME_6 + " WHERE " + DatabaseHelper.COL_61 + "=? ", new String[]{data});
 
         if(cursor.getCount()==0){
@@ -84,8 +105,6 @@ public class CustomerEmergencyFragment extends Fragment {
         cursor.close();
 
 
-
-        return v;
     }
     private void pushingEmergencyNumber(String phone){
         ContentValues contentValues = new ContentValues();
@@ -111,6 +130,10 @@ public class CustomerEmergencyFragment extends Fragment {
                     tvEmergency2.setText(phoneNumber2);}
                     }
 
+
+    }
+    private boolean deleteEmergencynumbers(){
+            return dbWrite.delete(DatabaseHelper.TABLE_NAME_6, DatabaseHelper.COL_61 + "=?", new String[]{data}) > 0;
 
     }
 

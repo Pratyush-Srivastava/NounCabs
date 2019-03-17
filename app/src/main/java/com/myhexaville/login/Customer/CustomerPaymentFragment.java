@@ -102,8 +102,8 @@ public class CustomerPaymentFragment extends Fragment {
             do{
 
                 String BeforeAdding=cursor.getString(cursor.getColumnIndex("wallet"));
-                int beforeAdding=Integer.parseInt(BeforeAdding);
-                int afterAdding=beforeAdding+Integer.parseInt(moneyToBeAdded);
+                float beforeAdding=Float.parseFloat(BeforeAdding);
+                float afterAdding=beforeAdding+Float.parseFloat(moneyToBeAdded);
                 String AfterAdding=""+afterAdding;
                 updatingWallet(AfterAdding);
 
@@ -116,7 +116,7 @@ public class CustomerPaymentFragment extends Fragment {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.COL_32, AfterAdding);
         dbWrite.update(DatabaseHelper.TABLE_NAME_3,contentValues,DatabaseHelper.COL_31+" =? ",new String[]{data});
-        Toast.makeText(getContext(),"Rs. "+AfterAdding+" added to your wallet ",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(),"Rs. "+String.format("%.2f",Float.parseFloat(moneyToBeAdded))+" added to your wallet ",Toast.LENGTH_SHORT).show();
         displayingTheWalletContent();
 
     }
@@ -130,7 +130,8 @@ public class CustomerPaymentFragment extends Fragment {
             do{
 
                 String valueWallet=cursor.getString(cursor.getColumnIndex("wallet"));
-                tvWalletValue.setText(valueWallet);
+                tvWalletValue.setText(String.format("%.2f",Float.parseFloat(valueWallet)));
+
 
             } while(cursor.moveToNext());
         }

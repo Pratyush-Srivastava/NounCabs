@@ -67,6 +67,16 @@
 
 
         </LinearLayout>
+    <Button
+        android:id="@+id/bt_delete_emergency_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@color/colorPrimary"
+        android:text="Delete Emergency Contacts"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="18dp" />
 </LinearLayout>
 <LinearLayout
     android:id="@+id/ll_old_emergency"
@@ -98,6 +108,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="18dp"
+            android:inputType="phone"
             android:singleLine="true"
             android:layout_weight="1"/>
 
@@ -124,6 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
+                android:inputType="phone"
                 android:gravity="center" />
 
     </LinearLayout>

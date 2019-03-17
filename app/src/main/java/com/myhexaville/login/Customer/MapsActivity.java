@@ -13,6 +13,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompletePrediction;
@@ -52,6 +55,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -103,6 +111,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     SQLiteOpenHelper openHelper;
     SQLiteDatabase dbRead,dbWrite;
     Cursor cursor;
+
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 23487;
+    private static final int AUTOCOMPLETE_REQUEST_CODE_DROP = 23486;
+    private PlacesClient placesClient;
+    private TextView responseView,responseViewDrop;
+    private FieldSelector fieldSelector;
 
     private static final String TAG = "MapActivity";
 
@@ -167,58 +181,77 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        ButterKnife.bind(this);
-//        mAutocomplete.setOnPlaceSelectedListener(new OnPlaceSelectedListener() {
-//            @Override
-//            public void onPlaceSelected(final Place place) {
-//                mAutocomplete.getDetailsFor(place, new DetailsCallback() {
-//                    @Override
-//                    public void onSuccess(final PlaceDetails details) {
-//                        Log.d("test", "details " + details);
-//                        mStreet.setText(details.name);
-//                        for (AddressComponent component : details.address_components) {
-//                            for (AddressComponentType type : component.types) {
-//                                switch (type) {
-//                                    case STREET_NUMBER:
-//                                        break;
-//                                    case ROUTE:
-//                                        break;
-//                                    case NEIGHBORHOOD:
-//                                        break;
-//                                    case SUBLOCALITY_LEVEL_1:
-//                                        break;
-//                                    case SUBLOCALITY:
-//                                        break;
-//                                    case LOCALITY:
-//                                        mCity.setText(component.long_name);
-//                                        break;
-//                                    case ADMINISTRATIVE_AREA_LEVEL_1:
-//                                        mState.setText(component.short_name);
-//                                        break;
-//                                    case ADMINISTRATIVE_AREA_LEVEL_2:
-//                                        break;
-//                                    case COUNTRY:
-//                                        break;
-//                                    case POSTAL_CODE:
-//                                        mZip.setText(component.long_name);
-//                                        break;
-//                                    case POLITICAL:
-//                                        break;
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(final Throwable failure) {
-//                        Log.d("test", "failure " + failure);
-//                    }
-//                });
-//            }
-//        });
+        checkInternetPermissions();
 
 
         setContentView(R.layout.activity_maps);
+        String apiKey = getString(R.string.google_maps_key);
+
+        if (apiKey.equals("")) {
+            Toast.makeText(this, "api places initialising error", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Setup Places Client
+        if (!com.google.android.libraries.places.api.Places.isInitialized()) {
+            com.google.android.libraries.places.api.Places.initialize(getApplicationContext(), apiKey);
+        }
+
+        //newly adding
+        placesClient = com.google.android.libraries.places.api.Places.createClient(this);
+        responseView = findViewById(R.id.response);
+        responseViewDrop=findViewById(R.id.response_drop);
+
+        fieldSelector =
+                new FieldSelector(
+                        findViewById(R.id.use_custom_fields), findViewById(R.id.custom_fields_list));
+
+        // Setup Autocomplete Support Fragment
+        final AutocompleteSupportFragment autocompleteSupportFragment =
+                (AutocompleteSupportFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragment.setPlaceFields(getPlaceFields());
+        autocompleteSupportFragment.setOnPlaceSelectedListener(
+                new PlaceSelectionListener() {
+                    @Override
+                    public void onPlaceSelected(com.google.android.libraries.places.api.model.Place place) {
+                        responseView.setText(
+                                StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+                        settingPickup(place.getLatLng());
+                    }
+
+                    @Override
+                    public void onError(Status status) {
+                        responseView.setText(status.getStatusMessage());
+                    }
+                });
+
+        // Setup Autocomplete Support Fragment
+        final AutocompleteSupportFragment autocompleteSupportFragmentDrop =
+                (AutocompleteSupportFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_drop);
+        autocompleteSupportFragmentDrop.setPlaceFields(getPlaceFields());
+        autocompleteSupportFragmentDrop.setOnPlaceSelectedListener(
+                new PlaceSelectionListener() {
+                    @Override
+                    public void onPlaceSelected(com.google.android.libraries.places.api.model.Place place) {
+                        responseViewDrop.setText(
+                                StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+                        settingDrop(place.getLatLng());
+                    }
+
+                    @Override
+                    public void onError(Status status) {
+                        responseViewDrop.setText(status.getStatusMessage());
+                    }
+                });
+
+
+
+
+
+
+
         mSearchTextDrop =  findViewById(R.id.input_search);
         mSearchTextPickUp=findViewById(R.id.input_search_pickup);
         mGps =  findViewById(R.id.ic_gps);
@@ -230,7 +263,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                //rideNowButton();
+                rideNowButton();
             }
         });
         getLocationPermission();
@@ -239,6 +272,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+    private void checkInternetPermissions(){
+        if (ContextCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+        }
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+        {
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.INTERNET");
+
+            if (permissionCheck != 0) {
+
+                this.requestPermissions(new String[]{android.Manifest.permission.INTERNET}, 1001); //Any number
+            }
+        }else {
+            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
+    }
+    private List<com.google.android.libraries.places.api.model.Place.Field> getPlaceFields() {
+        if (((CheckBox) findViewById(R.id.use_custom_fields)).isChecked()) {
+            return fieldSelector.getSelectedFields();
+        } else {
+            return fieldSelector.getAllFields();
+        }
+    }
+    private boolean isDisplayRawResultsChecked() {
+        return ((CheckBox) findViewById(R.id.display_raw_results)).isChecked();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == AutocompleteActivity.RESULT_OK) {
+                com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(intent);
+                responseView.setText(
+                        StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(intent);
+                responseView.setText(status.getStatusMessage());
+            } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE_DROP) {
+            if (resultCode == AutocompleteActivity.RESULT_OK) {
+                com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(intent);
+                responseViewDrop.setText(
+                        StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(intent);
+                responseViewDrop.setText(status.getStatusMessage());
+            } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
+        // Required because this class extends AppCompatActivity which extends FragmentActivity
+        // which implements this method to pass onActivityResult calls to child fragments
+        // (eg AutocompleteFragment).
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+
     private void rideNowButton(){
 
 
@@ -249,8 +343,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String formattedDate = df.format(c.getTime());
         SimpleDateFormat tf = new SimpleDateFormat("hh:mm a");
         String formattedTime = tf.format(c.getTime());
-        pickupPoint=mSearchTextPickUp.getText().toString();
-        dropPoint= mSearchTextDrop.getText().toString();
+//        pickupPoint=mSearchTextPickUp.getText().toString();
+//        dropPoint= mSearchTextDrop.getText().toString();
+        pickupPoint=responseView.getText().toString();
+        dropPoint=responseViewDrop.getText().toString();
 
         //hardCoding
         //double distanceValue = (pickup.distanceTo(drop))* 0.000621371 ;
@@ -260,12 +356,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         float[] results=new float[3];
         Location.distanceBetween(pickup.getLatitude(),pickup.getLongitude(),drop.getLatitude(),drop.getLongitude(),results);
 
-        distance= String.format("%d",(int)(results[0]/1000));
+        distance= String.format("%.2f",(results[0]/625));
         Random r = new Random();
         int i = r.nextInt(9999 - 1000) + 1000;
         otp=""+i;
         timeStamp=formattedTime+" "+formattedDate;
-        fare=""+fare(Integer.parseInt(distance));
+        fare=""+fare(Float.parseFloat(distance));
         Log.d(TAG," the value of fare is ######################## "+fare);
 
 
@@ -285,14 +381,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             do{
 
                 String wallet=cursor.getString(cursor.getColumnIndex("wallet"));
-                int WalletValue=Integer.parseInt(wallet);
-                if(Integer.parseInt(fare)>WalletValue){
+                float WalletValue=Float.parseFloat(wallet);
+                if(Float.parseFloat(fare)>WalletValue){
                     //insufficient funds
                     Toast.makeText(this,"Insufficient Cash in the Wallet",Toast.LENGTH_SHORT).show();
 
                 }
                 else{
-                    int newValue=WalletValue-Integer.parseInt(fare);
+                    float newValue=WalletValue-Float.parseFloat(fare);
                     decrementingWallet(""+newValue);
                     sufficientFunds();
 
@@ -306,8 +402,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
-    public int fare(int dist)  {
-        int fare;
+    public float fare(float dist)  {
+        float fare;
         if(dist>5){
             fare=dist-5;
             fare*=15;
@@ -463,7 +559,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "geoLocateDrop: geolocating");
 
 
-        String searchStringPickup=mSearchTextPickUp.getText().toString();
+//        String searchStringPickup=mSearchTextPickUp.getText().toString();
+        String searchStringPickup=responseView.getText().toString();
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
@@ -495,7 +592,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void geoLocateDrop(){
         Log.d(TAG, "geoLocateDrop: geolocating");
 
-        String searchString = mSearchTextDrop.getText().toString();
+        //String searchString = mSearchTextDrop.getText().toString();
+        String searchString=responseViewDrop.getText().toString();
 
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);

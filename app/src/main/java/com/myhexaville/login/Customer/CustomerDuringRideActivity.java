@@ -1,5 +1,6 @@
 package com.myhexaville.login.Customer;
 
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,6 +49,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkInternetPermissions();
+        checkFilePermissions();
         setContentView(R.layout.activity_customer_during_ride);
         openHelper = new DatabaseHelper(this);
         db=openHelper.getWritableDatabase();
@@ -55,6 +57,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
         btStopRide=findViewById(R.id.bt_stop_ride_customer);
         btSendSmsEmergency=findViewById(R.id.bt_send_sms_emergency_during_ride);
         tvFare=findViewById(R.id.tv_riding_during_customer);
+
         btSendSmsEmergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +82,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
         wvMaps.loadUrl("https://www.google.com/maps/dir/"+PickUpLatitude+"%C2%B0+N,+"+PickUpLongitude+"%C2%B0+E/"+DropLatitude+"%C2%B0+N,+"+DropLongitude+"%C2%B0+E/data=!3m1!4b1!4m10!4m9!1m3!2m2!1d78.4867!2d17.385!1m3!2m2!1d80.2707!2d13.0827!3e0");
 
 
-        checkFilePermissions();
+
 
         btStopRide.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +96,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
 
     private void defineFirstClick(){
         tvFare.setText(" Estimated Fare = Rs. "+rides.getFare());
-        btStopRide.setText(" Go To the Home Page");
+        btStopRide.setText(" Go To Home Page");
         //pushing values to the ride history of that driver
 
         insertValuesToRidesTable(rides.getPickupPoint(),rides.getDropPoint(),rides.getDistance(),rides.getOtp(),rides.getTimeStamp(),rides.getFare(),rides.getDriverPhoneNumber(),rides.getCustomerPhoneNumber());
@@ -167,10 +170,12 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
         Toast.makeText(this," Message sent by Sms Manager ",Toast.LENGTH_SHORT).show();
 
     }
+
     private void checkFilePermissions() {
         if (ContextCompat.checkSelfPermission(CustomerDuringRideActivity.this, android.Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
+            Toast.makeText(this,"Please Give Permissions",Toast.LENGTH_SHORT).show();
         }
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
         {
