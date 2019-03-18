@@ -3,6 +3,7 @@ package com.myhexaville.login.Customer;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -17,9 +18,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.myhexaville.login.CabHiring;
 import com.myhexaville.login.login.MainActivity;
 import com.myhexaville.login.R;
 
@@ -31,6 +39,8 @@ public class CustomerActivity extends AppCompatActivity implements NavigationVie
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private Boolean mLocationPermissionsGranted;
     private static final String TAG=CustomerActivity.class.getSimpleName();
+    private FirebaseFirestore dbOnline;
+    private TextView tvRating;
 
 
 
@@ -52,6 +62,7 @@ public class CustomerActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_customer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app_bar_customer);
         setSupportActionBar(toolbar);
+        dbOnline= FirebaseFirestore.getInstance();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_customer);
@@ -62,6 +73,26 @@ public class CustomerActivity extends AppCompatActivity implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_customer);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView=navigationView.getHeaderView(0);
+        tvRating=headerView.findViewById(R.id.tv_nav_header_rating_customer);
+        String data=((CabHiring) this.getApplication()).getPhoneNumber();
+        dbOnline.collection("rating").document(data).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        tvRating.setText(document.getData().get("average").toString());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
         displayView(R.id.nav_book_rides_customer);
         checkFilePermissions();
 //        getLocationPermission();

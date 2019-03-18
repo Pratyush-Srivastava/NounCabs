@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.myhexaville.login.DatabaseHelper;
 import com.myhexaville.login.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpFragment extends Fragment implements OnSignUpListener {
     private static final String TAG = "SignUpFragment";
@@ -31,6 +39,7 @@ public class SignUpFragment extends Fragment implements OnSignUpListener {
 
     SQLiteOpenHelper openHelper;
     SQLiteDatabase db,dbRead;
+    FirebaseFirestore dbFirestore;
     TextView btSignUp;
     EditText etvFirstName,etvLastName, etvPassword,etvConfirmPassword, etvPhoneNumber,
             etvLicenseNo,etvCarNumber,etvCarType,etvCarName,etvAddress;
@@ -47,6 +56,7 @@ public class SignUpFragment extends Fragment implements OnSignUpListener {
         View inflate = inflater.inflate(R.layout.fragment_signup, container, false);
 
         openHelper = new DatabaseHelper(getContext());
+        dbFirestore=FirebaseFirestore.getInstance();
 
         rgTypeOfUser=(RadioGroup)inflate.findViewById(R.id.rg_typeOfUser);
         etvFirstName = (EditText)inflate.findViewById(R.id.etv_first_name_register);
@@ -120,6 +130,7 @@ public class SignUpFragment extends Fragment implements OnSignUpListener {
                             {
                                 insertDataToUser(PhoneNumber,Password,FirstName,LastName,date+"-"+month+"-"+year,"customer");
                                 insertDataToCustomer(PhoneNumber,"0");
+                                insertRatingInFirestore(PhoneNumber);
                                 Toast.makeText(getContext(), "register successfully", Toast.LENGTH_SHORT).show();
                             }
                             break;
@@ -136,6 +147,7 @@ public class SignUpFragment extends Fragment implements OnSignUpListener {
                             {
                                 insertDataToUser(PhoneNumber,Password,FirstName,LastName,date+"-"+month+"-"+year,"driver");
                                 insertDataToDriver(PhoneNumber,Address,LicenseNumber,"yes","0",CarNumber,CarType,CarName);
+                                insertRatingInFirestore(PhoneNumber);
                                 Toast.makeText(getContext(), "register successfully", Toast.LENGTH_SHORT).show();
                             }
                             break;
@@ -222,6 +234,14 @@ public class SignUpFragment extends Fragment implements OnSignUpListener {
         contentValues.put(DatabaseHelper.COL_32, wallet);
         long id = db.insert(DatabaseHelper.TABLE_NAME_3, null, contentValues);
 
+
+    }
+    private void insertRatingInFirestore(String phoneNumber){
+        Map<String, Object> data = new HashMap<>();
+        data.put("average", "0");
+        data.put("number", "0");
+
+        dbFirestore.collection("rating").document(phoneNumber).set(data);
 
     }
     private boolean checkForNewCustomer(String phoneNumber){

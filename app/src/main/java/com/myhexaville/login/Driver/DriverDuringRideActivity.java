@@ -1,6 +1,7 @@
 package com.myhexaville.login.Driver;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class DriverDuringRideActivity extends AppCompatActivity implements LocationListener {
@@ -68,6 +71,9 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
     private LatLng temp;
     private float d=0;
     int f=0;
+    private double specificRating,newRating;
+    private int numberOfCustomersServed;
+    private Button btSubmitRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,7 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
         wvMaps=findViewById(R.id.wv_maps);
         rideRequests=(RideRequests) getIntent().getSerializableExtra("RequestObject");
         dbOnline= FirebaseFirestore.getInstance();
+
 
 
         locationManager = (LocationManager)
@@ -132,6 +139,72 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
 
         return fare;
     }
+    protected void showRatingDialog(){
+        Dialog dialog=new Dialog(this);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_rating);
+        dialog.setTitle("Rate your ride!");
+        RatingBar ratingBar=(RatingBar)dialog.findViewById(R.id.ratingBar);
+        dialog.show();
+        btSubmitRating=(Button)dialog.findViewById(R.id.button2);
+        btSubmitRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                specificRating=ratingBar.getRating();
+
+
+                dbOnline.collection("rating").document(rideRequests.getCustomerPhoneNumber())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                String avg=document.getData().get("average").toString();
+                                String number=document.getData().get("number").toString();
+                                double a=Double.parseDouble(avg);
+                                int n=Integer.parseInt(number);
+                                newRating=((a*n)+specificRating)/(n+1);
+                                numberOfCustomersServed=n+1;
+                                Log.d(TAG,"new rating and number"+newRating+" and "+numberOfCustomersServed+" and "+specificRating);
+                                updateAverage(newRating,numberOfCustomersServed);
+
+
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+
+    }
+    private void updateAverage(double newRating,int numberOfCustomersServed){
+        Map<String, Object> city = new HashMap<>();
+        city.put("average", ""+newRating);
+        city.put("number", ""+numberOfCustomersServed);
+
+        dbOnline.collection("rating").document(rideRequests.getCustomerPhoneNumber())
+                .set(city)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "!!!DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+    }
 
 
     private Address retrieveAddress(String addressString){
@@ -181,6 +254,7 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         rideRequests.setDistance(document.getData().get("distance").toString());
+                        Log.d(TAG,"setting the distance"+rideRequests.getDistance());
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -197,6 +271,7 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
         insertValuesToRidesTable(rideRequests.getPickupPoint(),rideRequests.getDropPoint(),rideRequests.getDistance(),rideRequests.getOtp(),rideRequests.getTimeStamp(),rideRequests.getFare(),data,rideRequests.getCustomerPhoneNumber());
         Log.d(TAG,"FIRST CLICKED");
 
+        showRatingDialog();
 
 
         btStopRide.setOnClickListener(new View.OnClickListener() {
@@ -248,8 +323,8 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
 
     private void sendBill(){
         sendMessage("GREETINGS FROM VELOCE CABS. YOUR RIDE BILL AND DETAILS OF YOUR TRAVEL ON : "+rideRequests.getTimeStamp()+"\n" +
-                "are Distance Travelled  : "+rideRequests.getDistance()+" kms, \n" +
-                "Total Fare          : "+rideRequests.getFare()+" Rs.\n" +
+                "are Distance Travelled  : "+String.format("%.2f",Double.parseDouble(rideRequests.getDistance()))+" kms, \n" +
+                "Total Fare          : "+String.format("%.2f",Double.parseDouble(rideRequests.getFare()))+" Rs.\n" +
                 "\nTHANK YOU!!!");
 //        Random random=new Random();
 //        String no = "+91"+rideRequests.getCustomerPhoneNumber();

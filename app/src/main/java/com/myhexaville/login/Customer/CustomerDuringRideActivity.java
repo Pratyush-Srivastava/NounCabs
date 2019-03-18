@@ -1,5 +1,6 @@
 package com.myhexaville.login.Customer;
 
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,9 +23,14 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -39,6 +46,9 @@ import com.myhexaville.login.RideRequests;
 import com.myhexaville.login.Rides;
 import com.myhexaville.login.WebViewMaps;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CustomerDuringRideActivity extends AppCompatActivity {
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase db,dbRead;
@@ -51,6 +61,10 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
     private WebView wvMaps;
     private TextView tvCurrentFare;
     private FirebaseFirestore dbOnline;
+
+    private double specificRating,newRating;
+    private int numberOfCustomersServed;
+    private Button btSubmitRating;
 
 
     @Override
@@ -102,6 +116,7 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
 
             }
         });
+
         wvMaps=findViewById(R.id.wv_maps_customer);
 
 
@@ -143,13 +158,99 @@ public class CustomerDuringRideActivity extends AppCompatActivity {
 
         return fare;
     }
+    protected void showRatingDialog(){
+        Dialog dialog=new Dialog(this);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_rating);
+        dialog.setTitle("Rate your ride!");
+        RatingBar ratingBar=(RatingBar)dialog.findViewById(R.id.ratingBar);
+        dialog.show();
+        btSubmitRating=(Button)dialog.findViewById(R.id.button2);
+        btSubmitRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                specificRating=ratingBar.getRating();
+
+
+                dbOnline.collection("rating").document(rides.getDriverPhoneNumber())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d(TAG, "!DocumentSnapshot data: " + document.getData());
+                                String avg=document.getData().get("average").toString();
+                                String number=document.getData().get("number").toString();
+                                double a=Double.parseDouble(avg);
+                                int n=Integer.parseInt(number);
+                                newRating=((a*n)+specificRating)/(n+1);
+                                numberOfCustomersServed=n+1;
+                                updateAverage(newRating,numberOfCustomersServed);
+
+
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+
+    }
+    private void updateAverage(double newRating,int numberOfCustomersServed){
+        Map<String, Object> city = new HashMap<>();
+        city.put("average", ""+newRating);
+        city.put("number", ""+numberOfCustomersServed);
+
+        dbOnline.collection("rating").document(rides.getDriverPhoneNumber())
+                .set(city)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "!!DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+    }
 
 
     private void defineFirstClick(){
         rides.setFare(tvCurrentFare.getText().toString());
+
         tvFare.setText("Final Fare = Rs. "+rides.getFare());
+        //getting the final distance
+        dbOnline.collection("duringRide").document(rides.getTimeStamp()+" "+rides.getOtp())
+        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        String finalDist=document.getData().get("distance").toString();
+                        rides.setDistance(finalDist);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
         btStopRide.setText("Go To Home Page");
         //pushing values to the ride history of that driver
+        showRatingDialog();
 
         insertValuesToRidesTable(rides.getPickupPoint(),rides.getDropPoint(),rides.getDistance(),rides.getOtp(),rides.getTimeStamp(),rides.getFare(),rides.getDriverPhoneNumber(),rides.getCustomerPhoneNumber());
         btStopRide.setOnClickListener(new View.OnClickListener() {

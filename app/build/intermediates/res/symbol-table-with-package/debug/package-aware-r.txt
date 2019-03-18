@@ -1290,6 +1290,7 @@ drawable ic_menu_send
 drawable ic_menu_share
 drawable ic_menu_slideshow
 drawable ic_my_location_black_24dp
+drawable ic_stars_black_24dp
 drawable icons_cancel
 drawable icons_car_pool
 drawable icons_hotel_building
@@ -1381,6 +1382,7 @@ id bt_stop_ride
 id bt_stop_ride_customer
 id bt_view_maps
 id button
+id button2
 id buttonPanel
 id cancel_action
 id center
@@ -1555,6 +1557,7 @@ id profileLayout_driver
 id progress_circular
 id progress_horizontal
 id radio
+id ratingBar
 id rb_customer
 id rb_driver
 id response
@@ -1620,7 +1623,7 @@ id text
 id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
-id textView
+id textView2
 id textWatcher
 id text_input_password_toggle
 id textinput_counter
@@ -1663,7 +1666,8 @@ id tv_licenseNo_driver
 id tv_login
 id tv_name_driver
 id tv_name_profile_customer
-id tv_nav_header_phone_number
+id tv_nav_header_rating_customer
+id tv_nav_header_rating_driver
 id tv_phone_number_customer
 id tv_phone_number_driver
 id tv_pickup_take_rides_driver
@@ -1758,6 +1762,7 @@ layout design_navigation_item_subheader
 layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_password_icon
+layout dialog_rating
 layout fragment_customer_book_rides
 layout fragment_customer_emergency
 layout fragment_customer_payment

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,7 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.myhexaville.login.CabHiring;
 import com.myhexaville.login.Customer.CustomerDuringRideActivity;
 import com.myhexaville.login.R;
 import com.myhexaville.login.login.MainActivity;
@@ -25,6 +33,8 @@ public class DriverActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean viewIsAtHome;
     private static final String TAG = DriverActivity.class.getSimpleName();
+    private FirebaseFirestore dbOnline;
+    private TextView tvRating;
 
 
 
@@ -46,6 +56,8 @@ public class DriverActivity extends AppCompatActivity
         setContentView(R.layout.activity_driver);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app_bar_driver);
         setSupportActionBar(toolbar);
+        dbOnline=FirebaseFirestore.getInstance();
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_driver);
@@ -56,6 +68,26 @@ public class DriverActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_driver);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView=navigationView.getHeaderView(0);
+
+        tvRating=headerView.findViewById(R.id.tv_nav_header_rating_driver);
+        String data=((CabHiring) this.getApplication()).getPhoneNumber();
+        dbOnline.collection("rating").document(data).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        tvRating.setText(document.getData().get("average").toString());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
         displayView(R.id.nav_take_rides_driver);
 //        checkFilePermissions();
     }
