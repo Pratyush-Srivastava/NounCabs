@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
+    android:background="#ffffff"
     android:theme="@style/AppTheme"
     >
 
@@ -39,11 +39,11 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:fontFamily="sans-serif-condensed"
             android:text="Enter PickUp"
             android:textAppearance="@android:style/TextAppearance.Material.Small"
-            android:textColor="@android:color/white"
-            android:layout_marginLeft="16dp"/>
+            android:textColor="@android:color/black" />
         <fragment
             android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
@@ -95,10 +95,10 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:fontFamily="sans-serif-condensed"
             android:text="Enter Drop"
-            android:layout_marginLeft="16dp"
-            android:textColor="#ffffff" />
+            android:textColor="@android:color/black" />
         <fragment
             android:id="@+id/autocomplete_fragment_drop"
             android:layout_width="match_parent"

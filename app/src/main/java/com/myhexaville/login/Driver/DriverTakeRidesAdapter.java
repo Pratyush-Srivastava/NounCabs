@@ -92,7 +92,7 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
                 addingToTheRides(getAdapterPosition());
                 deletingRequest(getAdapterPosition());
                 creatingDocForCurrentFare();
-                moveToDuringRideActivity(getAdapterPosition());
+                moveToDriverCancelActivity(getAdapterPosition());
                 return false;
             }
             public void creatingDocForCurrentFare(){
@@ -135,7 +135,7 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
                     //deleting the document from the database
                     Log.d(TAG, "6TH ENTRY JUST BEFORE DELETING WITH DOCUMENT ID "+rideRequestsList.get(position));
 
-                    db.collection("RideRequests").document(rideRequestsList.get(position).getTimeStamp()+" "+rideRequestsList.get(position).getDistance())
+                    db.collection("RideRequests").document(rideRequestsList.get(position).getTimeStamp()+" "+rideRequestsList.get(position).getOtp())
                             .delete()
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -153,9 +153,9 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
 
 
             }
-            public void moveToDuringRideActivity(int position){
+            public void moveToDriverCancelActivity(int position){
                 //push to your rides
-                Intent i = new Intent(context.getActivity(), DriverDuringRideActivity.class);
+                Intent i = new Intent(context.getActivity(), DriverCancelActivity.class);
                 i.putExtra("RequestObject",rideRequestsList.get(position));
 
 

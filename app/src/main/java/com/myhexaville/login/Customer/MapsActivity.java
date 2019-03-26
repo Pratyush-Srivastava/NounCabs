@@ -211,12 +211,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 (AutocompleteSupportFragment)
                         getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         autocompleteSupportFragment.setPlaceFields(getPlaceFields());
+
         autocompleteSupportFragment.setOnPlaceSelectedListener(
                 new PlaceSelectionListener() {
                     @Override
                     public void onPlaceSelected(com.google.android.libraries.places.api.model.Place place) {
                         responseView.setText(
                                 StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+                        responseView.setTextColor(Color.WHITE);
                         settingPickup(place.getLatLng());
                     }
 
@@ -237,6 +239,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onPlaceSelected(com.google.android.libraries.places.api.model.Place place) {
                         responseViewDrop.setText(
                                 StringUtil.stringifyAutocompleteWidget(place, isDisplayRawResultsChecked()));
+                        responseViewDrop.setTextColor(Color.WHITE);
                         settingDrop(place.getLatLng());
                     }
 
@@ -426,7 +429,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         RideRequests rideRequests=new RideRequests(pickupPoint,dropPoint,distance,otp,timeStamp,fare,customerPhoneNumber);
 
-        db.collection("RideRequests").document(timeStamp+" "+distance).set(rideRequests);
+        db.collection("RideRequests").document(timeStamp+" "+otp).set(rideRequests);
         progress = new ProgressDialog(this);
         progress.setTitle("Searching for Drivers");
         progress.setMessage("Please Wait...");
@@ -476,7 +479,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void passingRidesObject(Rides rides){
         if(progress!=null) {
             progress.dismiss();
-            Intent intent = new Intent(MapsActivity.this, CustomerDuringRideActivity.class);
+            Intent intent = new Intent(MapsActivity.this, CustomerCancelActivity.class);
             intent.putExtra("RidesObject", rides);
             Log.d(TAG," Pickup and drop "+pickup.getLatitude());
             intent.putExtra("PickUpLatitude",pickup.getLatitude());

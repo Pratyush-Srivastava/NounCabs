@@ -83,7 +83,7 @@ public class CustomerActivity extends AppCompatActivity implements NavigationVie
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        tvRating.setText(document.getData().get("average").toString());
+                        tvRating.setText(String.format("%.2f",Double.parseDouble(document.getData().get("average").toString())));
                     } else {
                         Log.d(TAG, "No such document");
                     }

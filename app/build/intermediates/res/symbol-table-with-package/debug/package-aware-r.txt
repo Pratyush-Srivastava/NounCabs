@@ -1403,6 +1403,8 @@ id custom
 id customPanel
 id custom_fields_list
 id custom_fields_list_drop
+id customerCancel
+id customerOTP
 id cv_profile_pic_customer
 id dark
 id dataBinding
@@ -1420,11 +1422,13 @@ id display_raw_results
 id display_raw_results_drop
 id drawer_layout_customer
 id drawer_layout_driver
+id driverCancel
 id edit_query
 id end
 id end_padder
 id enterAlways
 id enterAlwaysCollapsed
+id enterOTP
 id etv__phonenumber_register
 id etv_address_register
 id etv_car_name_register
@@ -1613,6 +1617,7 @@ id src_in
 id src_over
 id standard
 id start
+id startRide
 id status_bar_latest_event_content
 id submenuarrow
 id submit_area
@@ -1735,8 +1740,10 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_customer
+layout activity_customer_cancel
 layout activity_customer_during_ride
 layout activity_driver
+layout activity_driver_cancel
 layout activity_driver_during_ride
 layout activity_main
 layout activity_maps

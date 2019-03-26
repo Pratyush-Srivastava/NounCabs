@@ -85,7 +85,7 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
         openHelper = new DatabaseHelper(this);
         db=openHelper.getWritableDatabase();
         wvMaps=findViewById(R.id.wv_maps);
-        rideRequests=(RideRequests) getIntent().getSerializableExtra("RequestObject");
+        rideRequests=(RideRequests) getIntent().getSerializableExtra("RequestCancelObject");
         dbOnline= FirebaseFirestore.getInstance();
 
 
