@@ -27,9 +27,11 @@ import static java.lang.Math.tan;
 
 public class LoginButton extends View {
     public static final String TAG = "LoginButton";
-    private int width, height;
+    private int width;
+    private int height;
 
-    private int buttonTop, buttonBottom;
+    private int buttonTop;
+    private int buttonBottom;
 
     private Paint loginButtonPaint;
     private Paint signUpButtonPaint;
@@ -42,13 +44,13 @@ public class LoginButton extends View {
     private int startRight;
     private float currentY;
     private int buttonCenter;
-    private float currentX, currentRight;
+    private float currentX;
+    private float currentRight;
     private float currentBottomY;
     private float currentBottomX;
-    private int currentArcY;
+
     private float currentArcX;
 
-    private Paint paint2;
     private Paint loginPaint;
     private Paint orPaint;
     private Paint signUpPaint;
@@ -97,10 +99,6 @@ public class LoginButton extends View {
         init();
     }
 
-//    public LoginButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-//        super(context, attrs, defStyleAttr, defStyleRes);
-//        init();
-//    }
 
     private void init() {
         loginButtonPaint = new Paint();
@@ -111,7 +109,7 @@ public class LoginButton extends View {
         signUpButtonPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         signUpButtonPaint.setStyle(FILL);
 
-        paint2 = new Paint();
+        Paint paint2 = new Paint();
         paint2.setColor(Color.parseColor("#ffffff"));
         paint2.setStyle(FILL);
 
@@ -128,7 +126,7 @@ public class LoginButton extends View {
         signUpPaint.setColor(ContextCompat.getColor(getContext(), R.color.text));
         signUpPaint.setTextSize(dpToPixels(64));
         signUpPaint.setTextAlign(CENTER);
-//        signUpPaint.setAlpha(255);
+
     }
 
     @Override
@@ -150,14 +148,14 @@ public class LoginButton extends View {
         currentY = buttonCenter;
         currentBottomY = buttonBottom;
         currentRight = startRight;
-        currentLeft = width - startRight;
+        currentLeft = (float)width - startRight;//CHANGE MADE
         startLeft = width - startRight;
 
         loginPaint.getTextBounds(getString(R.string.sign_up), 0, 7, r);
 
         currentLoginX = dpToPixels(92);
         int signUpWidth = r.right;
-        currentSignUpTextX = width - signUpWidth / 2 - dpToPixels(32);
+        currentSignUpTextX = width - signUpWidth /(float)2 - dpToPixels(32);//CHANGE MADE
 
         loginPaint.getTextBounds(getString(R.string.login), 0, 5, r);
 
@@ -171,7 +169,7 @@ public class LoginButton extends View {
 
         int loginWidth = r.right;
         orPaint.getTextBounds(getContext().getString(R.string.or).toUpperCase(), 0, 2, r);
-        float margin = (currentLoginX - loginWidth / 2) - dpToPixels(32) - r.right;
+        float margin = (currentLoginX - loginWidth / (float)2) - dpToPixels(32) - r.right;//CHANGE MADE
         signUpOrX = width - signUpWidth - dpToPixels(32) - r.right - margin;
 
         currentLoginY = buttonCenter + dpToPixels(8);
@@ -203,7 +201,7 @@ public class LoginButton extends View {
                 buttonBottom);
 
         signUpButtonOutline = new Rect(
-                (int) (width - currentRight - getButtonHeight() / 2),
+                (int) (width - currentRight - getButtonHeight() / (double)2),//CHANGE MADE
                 buttonTop,
                 width,
                 buttonBottom);
@@ -213,18 +211,13 @@ public class LoginButton extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-//        if (isLogin) {
-//            canvas.drawText(getString(R.string.sign_up), width / 2, dpToPixels(457), signUpPaint);
-//        } else {
-//            canvas.drawText(getString(R.string.login), width / 2, dpToPixels(357), loginPaint);
-//        }
 
         if (isLogin) {
             canvas.drawPath(loginButtonPath, loginButtonPaint);
             canvas.drawArc(
-                    currentRight - getButtonHeight() / 2 + currentArcX,
+                    currentRight - getButtonHeight() / (float)2 + currentArcX,//CHANGE MADE
                     buttonTop,
-                    currentRight + getButtonHeight() / 2 - currentArcX,
+                    currentRight + getButtonHeight() /(float) 2 - currentArcX,//CHANGE MADE
                     buttonBottom,
                     0,
                     360,
@@ -237,9 +230,9 @@ public class LoginButton extends View {
         } else {
             canvas.drawPath(signUpButtonPath, signUpButtonPaint);
             canvas.drawArc(
-                    currentLeft - getButtonHeight() / 2 + currentArcX,
+                    currentLeft - getButtonHeight() /(float) 2 + currentArcX,//CHANGE MADE
                     buttonTop,
-                    currentLeft + getButtonHeight() / 2 - currentArcX,
+                    currentLeft + getButtonHeight() /(float) 2 - currentArcX,//CHANGE MADE
                     buttonBottom,
                     0,
                     360,
@@ -260,10 +253,9 @@ public class LoginButton extends View {
         return getResources().getDimensionPixelOffset(R.dimen.bottom_margin);
     }
 
-    public void startAnimation() {
+    public void startButtonAnimation() {
         float start = getStartButtonRight();
         ValueAnimator animator = ObjectAnimator.ofFloat(0f, 1f);
-//        animator.setInterpolator(new AccelerateInterpolator());
         animator.addUpdateListener(animation -> {
             float fraction = (float) animation.getAnimatedValue();
             float currentAngle = fraction * ((float) PI / 2); // in radians
@@ -285,16 +277,16 @@ public class LoginButton extends View {
 
             // move login text to center and scale
             if (isLogin) {
-                currentLoginX = startLoginX + ((width / 2 - startLoginX) * fraction);
+                currentLoginX = startLoginX + ((width / (float)2 - startLoginX) * fraction);//CHANGE MADE
                 currentLoginY = startLoginY - ((startLoginY - dpToPixels(457)) * fraction);
                 loginPaint.setTextSize(smallTextSize + ((largeTextSize - smallTextSize) * (fraction)));
             } else {
-                currentSignUpTextX = startSignUpTextX - ((startSignUpTextX - width / 2) * fraction);
+                currentSignUpTextX = startSignUpTextX - ((startSignUpTextX - width / (float)2) * fraction);//CHANGE MADE
                 currentSignUpTextY = startSignUpTextY - ((startSignUpTextY - dpToPixels(457)) * fraction);
                 signUpPaint.setTextSize(smallTextSize + ((largeTextSize - smallTextSize) * (fraction)));
             }
 
-            currentArcY = (int) (fraction * dpToPixels(28)); // just hardcoded value
+//            currentArcY = (int) (fraction * dpToPixels(28)); // just hardcoded value
             currentArcX = (int) (fraction * dpToPixels(37)); // just hardcoded value
 
             double y = tan(currentAngle) * currentRight; // goes from ~ 0 to 4451
@@ -362,6 +354,7 @@ public class LoginButton extends View {
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                //this method need not be defined
 
             }
 
@@ -371,10 +364,9 @@ public class LoginButton extends View {
                 signUpPaint.setAlpha(255);
                 signUpPaint.setTextSize(dpToPixels(16));
                 currentArcX = 0;
-                currentArcY = 0;
 
                 currentRight = (int) getStartButtonRight();
-                currentLeft = width - (int) getStartButtonRight();
+                currentLeft = (float)width - (int) getStartButtonRight();
 
                 isLogin = !isLogin;
 
@@ -469,11 +461,13 @@ public class LoginButton extends View {
 
             @Override
             public void onAnimationCancel(Animator animation) {
+                //this function need not do anything
 
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
+                //this function need not do anything
 
             }
         });

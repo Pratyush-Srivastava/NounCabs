@@ -18,7 +18,7 @@ import static com.myhexaville.login.FlexibleFrameLayout.ORDER_SIGN_UP_STATE;
 
 
 public class MainActivity extends AppCompatActivity  {
-    private static final String TAG = "MainActivity";
+
     private ActivityMainBinding binding;
     private boolean isLogin = true;
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity  {
         }
 
         isLogin = !isLogin;
-        binding.button.startAnimation();
+        binding.button.startButtonAnimation();
     }
 
 

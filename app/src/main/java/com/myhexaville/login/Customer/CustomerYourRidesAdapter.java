@@ -1,7 +1,6 @@
 package com.myhexaville.login.Customer;
 
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,34 +9,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import java.util.ArrayList;
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.myhexaville.login.R;
 
-import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 public class CustomerYourRidesAdapter extends RecyclerView.Adapter<CustomerYourRidesAdapter.MyViewHolder> {
 
     private ArrayList<String> pickup;
     private ArrayList<String> drop;
     private ArrayList<String> time;
     private ArrayList<String> estFare;
-    public CustomerYourRidesFragment context;
+    private CustomerYourRidesFragment context;
 
 
     public CustomerYourRidesAdapter(CustomerYourRidesFragment context,ArrayList<String> pickup,ArrayList<String> drop,ArrayList<String> time,ArrayList<String> estFare){
@@ -80,10 +62,10 @@ public class CustomerYourRidesAdapter extends RecyclerView.Adapter<CustomerYourR
     //View holder class, where all view components are defined
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        public TextView tvPickup;
-        public TextView tvDrop;
-        public TextView tvEstFare;
-        public TextView tvTime;
+        private TextView tvPickup;
+        private TextView tvDrop;
+        private TextView tvEstFare;
+        private TextView tvTime;
 
         public MyViewHolder(View itemView) {
             super(itemView);

@@ -17,7 +17,7 @@ public class DriverYourRidesAdapter extends RecyclerView.Adapter<DriverYourRides
         private ArrayList<String> time;
         private ArrayList<String> estFare;
 
-        public DriverYourRidesFragment context;
+        private DriverYourRidesFragment context;
 
 
         public DriverYourRidesAdapter(DriverYourRidesFragment context, ArrayList<String> pickup, ArrayList<String> drop, ArrayList<String> time, ArrayList<String> estFare){
@@ -58,10 +58,10 @@ public class DriverYourRidesAdapter extends RecyclerView.Adapter<DriverYourRides
         //View holder class, where all view components are defined
         class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-            public TextView tvPickup;
-            public TextView tvDrop;
-            public TextView tvEstFare;
-            public TextView tvTime;
+            private TextView tvPickup;
+            private TextView tvDrop;
+            private TextView tvEstFare;
+            private TextView tvTime;
 
             public MyViewHolder(View itemView) {
                 super(itemView);

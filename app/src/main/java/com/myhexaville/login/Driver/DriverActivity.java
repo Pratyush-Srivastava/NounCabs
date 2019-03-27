@@ -120,6 +120,8 @@ public class DriverActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings_driver) {
+            Intent intent=new Intent(DriverActivity.this,DriverReportActivity.class);
+            startActivity(intent);
             return true;
         }
         if(id==R.id.action_logout_driver){

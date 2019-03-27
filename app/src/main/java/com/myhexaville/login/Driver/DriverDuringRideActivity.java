@@ -317,7 +317,7 @@ public class DriverDuringRideActivity extends AppCompatActivity implements Locat
             Toast.makeText(getApplicationContext(), "SMS Send !", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "SMS Failed ! "+e.toString(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+            Log.d(TAG,e.toString());
         }
     }
 

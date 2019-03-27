@@ -8,8 +8,8 @@ import android.widget.FrameLayout;
 
 public class FlexibleFrameLayout extends FrameLayout {
     private static final String TAG = "OrderLayout";
-    public static int ORDER_SIGN_UP_STATE = 0;
-    public static int ORDER_LOGIN_STATE = 1;
+    public static final int ORDER_SIGN_UP_STATE = 0;
+    public static final int ORDER_LOGIN_STATE = 1;
 
     private static final int[][] DRAW_ORDERS = new int[][]{
             {0, 1, 2},

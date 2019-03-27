@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
 MERGED from [com.android.databinding:adapters:3.3.1] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\adapters-3.3.1.aar\f7a69f87df2bafbaf999a0ca000eb2a0\AndroidManifest.xml:17:1-24:12
 MERGED from [com.android.databinding:library:3.3.1] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\library-3.3.1.aar\a057932a85a2dd3411f0077c160332b1\AndroidManifest.xml:17:1-24:12
 MERGED from [com.android.support:design:27.1.1] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\design-27.1.1.aar\b140bd7cc2c02c056d5c85cd87afc376\AndroidManifest.xml:17:1-22:12
@@ -56,20 +56,20 @@ MERGED from [com.google.firebase:protolite-well-known-types:16.0.1] C:\Users\Pra
 MERGED from [io.grpc:grpc-android:1.16.1] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\grpc-android-1.16.1.aar\2ed314e0915a6d857bb5155349e73787\AndroidManifest.xml:2:1-13:12
 MERGED from [com.android.volley:volley:1.1.1] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\volley-1.1.1.aar\efe3df88752d3b7fbabc460dc8ead202\AndroidManifest.xml:2:1-11:12
 MERGED from [android.arch.lifecycle:viewmodel:1.1.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\viewmodel-1.1.0.aar\303868f5f257574df9b3e7c5e08f799c\AndroidManifest.xml:17:1-22:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
-INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
+INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
 	package
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:3:5-36
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-62:12
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:1-67:12
 		INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:2:11-69
@@ -120,7 +120,7 @@ ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xm
 	android:name
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:14:22-78
 application
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:16:5-60:19
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:16:5-65:19
 MERGED from [com.google.android.libraries.places:places:1.0.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\places-1.0.0.aar\cf4a885f6bdd82581f9140f3dde8ddbc\AndroidManifest.xml:13:5-24:19
 MERGED from [com.google.android.libraries.places:places:1.0.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\places-1.0.0.aar\cf4a885f6bdd82581f9140f3dde8ddbc\AndroidManifest.xml:13:5-24:19
 MERGED from [de.hdodenhof:circleimageview:2.2.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\circleimageview-2.2.0.aar\6246855980c8d696ec74ff38964ffb6f\AndroidManifest.xml:9:5-20
@@ -189,74 +189,86 @@ MERGED from [com.android.volley:volley:1.1.1] C:\Users\Pratyush Srivastava\.grad
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:22:9-52
 	android:name
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:17:9-34
-activity#com.myhexaville.login.Driver.DriverCancelActivity
+activity#com.myhexaville.login.Driver.DriverReportActivity
 ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:23:9-74
 	android:name
 		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:23:19-62
-activity#com.myhexaville.login.Customer.CustomerCancelActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:24:9-69
-	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:24:19-66
 activity#com.myhexaville.login.login.MainActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:25:9-35:20
-	android:screenOrientation
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:28:13-49
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:24:9-27:68
 	android:label
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:27:13-45
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:26:13-45
 	android:theme
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:29:13-56
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:27:13-56
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:26:13-47
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:25:13-47
+activity#com.myhexaville.login.Driver.DriverCancelActivity
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:28:9-65
+	android:name
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:28:19-62
+activity#com.myhexaville.login.Customer.CustomerCancelActivity
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:29:9-69
+	android:name
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:29:19-66
+activity#com.myhexaville.login.SplashActivity
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:30:9-40:20
+	android:screenOrientation
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:33:13-49
+	android:label
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:32:13-45
+	android:theme
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:34:13-56
+	android:name
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:31:13-43
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:30:13-34:29
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:35:13-39:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:31:17-69
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:36:17-69
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:31:25-66
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:36:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:33:17-77
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:38:17-77
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:33:27-74
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:38:27-74
 activity#com.myhexaville.login.Driver.DriverActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:36:9-59
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:41:9-59
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:36:19-56
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:41:19-56
 activity#com.myhexaville.login.Customer.CustomerActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:37:9-63
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:42:9-63
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:37:19-60
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:42:19-60
 uses-library#org.apache.http.legacy
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:46:9-48:40
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:51:9-53:40
 	android:required
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:48:13-37
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:53:13-37
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:47:13-50
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:52:13-50
 meta-data#com.google.android.geo.API_KEY
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:50:9-52:55
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:55:9-57:55
 	android:value
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:52:13-52
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:57:13-52
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:51:13-58
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:56:13-58
 meta-data#com.google.android.gms.version
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:53:9-55:69
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:58:9-60:69
 MERGED from [com.google.android.gms:play-services-basement:16.2.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\play-services-basement-16.2.0.aar\e8e682b7a1e2d78995943437110d89fd\AndroidManifest.xml:23:9-25:69
 MERGED from [com.google.android.gms:play-services-basement:16.2.0] C:\Users\Pratyush Srivastava\.gradle\caches\transforms-1\files-1.1\play-services-basement-16.2.0.aar\e8e682b7a1e2d78995943437110d89fd\AndroidManifest.xml:23:9-25:69
 	android:value
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:55:13-66
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:60:13-66
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:54:13-58
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:59:13-58
 activity#com.myhexaville.login.Customer.MapsActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:57:9-59
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:62:9-59
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:57:19-56
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:62:19-56
 activity#com.myhexaville.login.Driver.DriverDuringRideActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:58:9-69
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:63:9-69
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:58:19-66
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:63:19-66
 activity#com.myhexaville.login.Customer.CustomerDuringRideActivity
-ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:59:9-73
+ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:64:9-73
 	android:name
-		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:59:19-70
+		ADDED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml:64:19-70
 uses-sdk
 INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Pratyush Srivastava\NounCabs\app\src\main\AndroidManifest.xml

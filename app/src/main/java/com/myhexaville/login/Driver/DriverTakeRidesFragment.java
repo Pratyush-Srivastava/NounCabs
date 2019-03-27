@@ -31,7 +31,7 @@ import static android.content.ContentValues.TAG;
 public class DriverTakeRidesFragment extends Fragment {
     private RecyclerView rv;
     DriverTakeRidesAdapter adapter;
-    public ArrayList<RideRequests> rideRequestsList;
+    private ArrayList<RideRequests> rideRequestsList;
     private FirebaseFirestore db;
 
 

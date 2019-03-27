@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -79,6 +80,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -266,7 +269,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                rideNowButton();
+                checkIfPickUpDropIsMentioned();
             }
         });
         mGps.setOnClickListener(new View.OnClickListener() {
@@ -341,6 +344,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // (eg AutocompleteFragment).
         super.onActivityResult(requestCode, resultCode, intent);
     }
+    private void checkIfPickUpDropIsMentioned(){
+        pickupPoint=responseView.getText().toString();
+        dropPoint=responseViewDrop.getText().toString();
+        Log.d(TAG,"hello"+pickupPoint+"and"+dropPoint);
+        if(pickupPoint.matches("RESPONSE") || dropPoint.matches("RESPONSE")){
+            Toast.makeText(this,"Please Enter the Pickup and Drop point",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            rideNowButton();
+        }
+
+    }
 
 
     private void rideNowButton(){
@@ -353,21 +368,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String formattedDate = df.format(c.getTime());
         SimpleDateFormat tf = new SimpleDateFormat("hh:mm a");
         String formattedTime = tf.format(c.getTime());
-//        pickupPoint=mSearchTextPickUp.getText().toString();
-//        dropPoint= mSearchTextDrop.getText().toString();
+
         pickupPoint=responseView.getText().toString();
         dropPoint=responseViewDrop.getText().toString();
 
-        //hardCoding
-        //double distanceValue = (pickup.distanceTo(drop))* 0.000621371 ;
-        if(pickup==null){
-            Log.d(TAG,"pickup is null ERROR");
-        }
+
         float[] results=new float[3];
         Location.distanceBetween(pickup.getLatitude(),pickup.getLongitude(),drop.getLatitude(),drop.getLongitude(),results);
 
         distance= String.format("%.2f",(results[0]/1000.0));
-        Random r = new Random();
+        Random r = null;
+        try {
+            r = SecureRandom.getInstanceStrong();
+
         int i = r.nextInt(9999 - 1000) + 1000;
         otp=""+i;
         timeStamp=formattedTime+" "+formattedDate;
@@ -408,7 +421,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         cursor.close();
 
-
+        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+            Log.d("context", e.toString());
+        }
 
 
     }
@@ -550,18 +566,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-
-
-
-
-//        mGps.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.d(TAG, "onClick: clicked gps icon");
-//                getDeviceLocation();
-//            }
-//        });
-
         hideSoftKeyboard();
     }
 
@@ -569,7 +573,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "geoLocateDrop: geolocating");
 
 
-//        String searchStringPickup=mSearchTextPickUp.getText().toString();
+
         String searchStringPickup=responseView.getText().toString();
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
@@ -674,39 +678,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
         }
     }
-//
-//    private void moveCamera(LatLng latLng, float zoom, PlacesInfo placeInfo){
-//        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-//
-//        mMap.clear();
-//
-//        if(placeInfo != null){
-//            try{
-//                String snippet = "Address: " + placeInfo.getAddress() + "\n" +
-//                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
-//                        "Website: " + placeInfo.getWebsiteUri() + "\n" +
-//                        "Price Rating: " + placeInfo.getRating() + "\n";
-//
-//                MarkerOptions options = new MarkerOptions()
-//                        .position(latLng)
-//                        .title(placeInfo.getName())
-//                        .snippet(snippet);
-//                mMarker = mMap.addMarker(options);
-//
-//            }catch (NullPointerException e){
-//                Log.e(TAG, "moveCamera: NullPointerException: " + e.getMessage() );
-//            }
-//        }else{
-//            mMap.addMarker(new MarkerOptions().position(latLng));
-//        }
-//
-//        hideSoftKeyboard();
-//
-//    }
-
-
-
 
     private void moveCamera(LatLng latLng, float zoom, String title){
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
@@ -874,8 +845,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d(TAG, "onResult: name: " + place.getName());
                 mPlace.setAddress(place.getAddress().toString());
                 Log.d(TAG, "onResult: address: " + place.getAddress());
-//                mPlace.setAttributions(place.getAttributions().toString());
-//                Log.d(TAG, "onResult: attributions: " + place.getAttributions());
+;
                 mPlace.setId(place.getId());
                 Log.d(TAG, "onResult: id:" + place.getId());
                 mPlace.setLatlng(place.getLatLng());
@@ -903,152 +873,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             places.release();
         }
     };
-
-    private class FetchUrl extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-            String data = "";
-
-            try {
-                data = downloadUrl(url[0]);
-                Log.d("Background Task data", data.toString());
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            ParserTask parserTask = new ParserTask();
-            parserTask.execute(result);
-
-        }
-    }
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.connect();
-            iStream = urlConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-            StringBuffer sb = new StringBuffer();
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            data = sb.toString();
-            Log.d("downloadUrl", data.toString());
-            br.close();
-        } catch (Exception e) {
-            Log.d("Exception", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
-
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//        mMap.addMarker(new MarkerOptions().position(chandigarh).title("Chandigarh"));
-//        mMap.addMarker(new MarkerOptions().position(delhi).title("Delhi"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(delhi));
-//
-//        String str_origin = "origin=" + delhi.latitude + "," + delhi.longitude;
-//        String str_dest = "destination=" + chandigarh.latitude + "," + chandigarh.longitude;
-//        String sensor = "sensor=false";
-//        String parameters = str_origin + "&" + str_dest + "&" + sensor;
-//        String output = "json";
-//        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-//
-//        Log.d("onMapClick", url.toString());
-//        FetchUrl FetchUrl = new FetchUrl();
-//        FetchUrl.execute(url);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(delhi));
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(7));
-//
-//        Location delhi_location = new Location("Delhi");
-//        delhi_location.setLatitude(delhi.latitude);
-//        delhi_location.setLongitude(delhi.longitude);
-//
-//        Location chandigarh_location = new Location("Chandigarh");
-//        chandigarh_location.setLatitude(chandigarh.latitude);
-//        chandigarh_location.setLongitude(chandigarh.longitude);
-//
-//        double distance = (delhi_location.distanceTo(chandigarh_location))* 0.000621371 ;
-//
-//        AlertDialog alertDialog = new AlertDialog.Builder(MapsActivity.this).create();
-//        alertDialog.setTitle("Info");
-//        alertDialog.setMessage("Distance between these two location is : "+distance +" miles");
-//        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//        alertDialog.show();
-//    }
-
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-                Log.d("ParserTask",jsonData[0].toString());
-                JSONParserTask parser = new JSONParserTask();
-                Log.d("ParserTask", parser.toString());
-                routes = parser.parse(jObject);
-                Log.d("ParserTask","Executing routes");
-                Log.d("ParserTask",routes.toString());
-
-            } catch (Exception e) {
-                Log.d("ParserTask",e.toString());
-                e.printStackTrace();
-            }
-            return routes;
-        }
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points;
-            PolylineOptions lineOptions = null;
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
-                List<HashMap<String, String>> path = result.get(i);
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    points.add(position);
-                }
-                lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.RED);
-
-                Log.d("onPostExecute","onPostExecute lineoptions decoded");
-
-            }
-            if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
-            }
-            else {
-                Log.d("onPostExecute","without Polylines drawn");
-            }
-        }
-    }
 
 
 }

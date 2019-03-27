@@ -69,11 +69,11 @@ public class DriverTakeRidesAdapter extends RecyclerView.Adapter<DriverTakeRides
         //View holder class, where all view components are defined
         class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
 
-            public TextView tvPickup;
-            public TextView tvDrop;
-            public TextView tvEstFare;
-            public TextView tvDist;
-            public CircleImageView civAccept;
+            private TextView tvPickup;
+            private TextView tvDrop;
+            private TextView tvEstFare;
+            private TextView tvDist;
+            private CircleImageView civAccept;
             public MyViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnLongClickListener(this);
